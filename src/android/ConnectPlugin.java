@@ -577,7 +577,7 @@ public class ConnectPlugin extends CordovaPlugin {
 
         if (declinedPermission != null) {
             graphContext.error("This request needs declined permission: " + declinedPermission);
-			return;
+      return;
         }
 
         if (publishPermissions && readPermissions) {
@@ -764,16 +764,13 @@ public class ConnectPlugin extends CordovaPlugin {
           public void onCompleted(GraphResponse graphResponse) {
               JSONObject jsonObj = graphResponse.getJSONObject();
               try {
-                  boolean success = jsonObj.getBoolean("success");
-                  if(success) {
-                      callbackContext.success();
+                  if (graphResponse.getError() != null) {
+                      callbackContext.error(getFacebookRequestErrorResponse(graphResponse.getError()));
                   } else {
-                      callbackContext.error(jsonObj.getString("error"));
+                      callbackContext.success();
                   }
-              } catch(JSONException e) {
-                  callbackContext.error("Bad JSON Response");
               } catch(Exception e){
-                  callbackContext.error("Error: " + e.getMessage());
+                  callbackContext.error("Error: " + getFacebookRequestErrorResponse(graphResponse.getError()));
               }
           }
       });
